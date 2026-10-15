@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Kiraan Detik SPM 2026 | SMK Syed Sirajuddin</title>
+<style>
+  :root { --navy:#071a33; --blue:#123e69; --teal:#19b6ad; --gold:#ffd166; --white:#f7fbff; }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; min-height:100vh; color:var(--white);
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: radial-gradient(ellipse at 15% 15%, #1a5680 0%, transparent 40%),
+                radial-gradient(ellipse at 85% 85%, #12645f 0%, transparent 38%),
+                linear-gradient(135deg,var(--navy),#0b2748 55%,#071a33);
+    display:flex; align-items:center; justify-content:center; padding:3vh 3vw; overflow:hidden;
+  }
+  .glow { position:fixed; width:36vw; height:36vw; border-radius:50%; background:#19b6ad12; filter:blur(10px); right:-10vw; top:-12vw; pointer-events:none; }
+  main { width:min(1500px,100%); text-align:center; position:relative; z-index:1; }
+  .eyebrow { display:inline-flex; align-items:center; gap:.65rem; border:1px solid #ffffff38; background:#ffffff0d; padding:.7rem 1.2rem; border-radius:999px; letter-spacing:.16em; font-size:clamp(.75rem,1.2vw,1rem); font-weight:700; }
+  .dot { width:.65rem; height:.65rem; border-radius:50%; background:var(--teal); box-shadow:0 0 15px var(--teal); }
+  h1 { font-size:clamp(2.6rem,7vw,6.8rem); line-height:.98; margin:1.4rem 0 .7rem; letter-spacing:.025em; font-weight:900; }
+  h1 span { color:var(--gold); }
+  .subtitle { font-size:clamp(1.05rem,2vw,1.8rem); color:#d4e7f7; margin:0 auto; }
+  .target { display:inline-block; margin:2rem 0 1.3rem; padding:.8rem 1.4rem; border-radius:12px; background:#ffffff12; border:1px solid #ffffff25; font-size:clamp(1rem,1.7vw,1.5rem); }
+  .target strong { color:var(--gold); }
+  .timer { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:clamp(.5rem,1.8vw,1.5rem); margin:1rem auto 1.8rem; max-width:1250px; }
+  .unit { background:linear-gradient(155deg,#ffffff18,#ffffff08); border:1px solid #ffffff2b; border-radius:clamp(12px,2vw,25px); padding:clamp(1rem,3vw,2.4rem) .5rem; box-shadow:0 15px 40px #00000018; }
+  .number { font-variant-numeric:tabular-nums; font-size:clamp(2.3rem,8.5vw,8rem); line-height:1; font-weight:850; letter-spacing:-.045em; }
+  .label { margin-top:.8rem; font-size:clamp(.75rem,1.5vw,1.25rem); letter-spacing:.12em; color:#bcd8ed; font-weight:700; }
+  .message { min-height:1.8em; font-size:clamp(1rem,1.7vw,1.5rem); color:#e4f1fc; margin:.5rem auto 1.4rem; }
+  .message strong { color:var(--gold); }
+  footer { margin-top:1.2rem; font-size:clamp(.8rem,1.25vw,1.05rem); color:#bcd0e1; letter-spacing:.03em; }
+  .controls { margin-top:1.2rem; }
+  button { color:#fff; background:#ffffff12; border:1px solid #ffffff45; padding:.7rem 1.1rem; border-radius:999px; cursor:pointer; font:inherit; }
+  button:hover { background:#ffffff25; }
+  @media(max-width:600px) { .timer { grid-template-columns:repeat(2,minmax(0,1fr)); } .target { margin-top:1.4rem; } body { overflow:auto; } }
+  @media(prefers-reduced-motion:no-preference) { .unit { animation: rise .7s ease both; } .unit:nth-child(2){animation-delay:.08s}.unit:nth-child(3){animation-delay:.16s}.unit:nth-child(4){animation-delay:.24s} @keyframes rise { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:translateY(0) } } }
+</style>
+</head>
+<body>
+<div class="glow" aria-hidden="true"></div>
+<main>
+  <div class="eyebrow"><span class="dot"></span> UNIT BIMBINGAN DAN KAUNSELING</div>
+  <h1>KIRAAN DETIK<br><span>SPM 2026</span></h1>
+  <p class="subtitle">Persediaan hari ini, kejayaan hari esok.</p>
+  <div class="target">UJIAN BERTUTUR BAHASA MELAYU &nbsp;·&nbsp; <strong>26 OKTOBER 2026</strong></div>
+  <section class="timer" aria-label="Baki masa sebelum ujian bermula">
+    <div class="unit"><div class="number" id="days">--</div><div class="label">HARI</div></div>
+    <div class="unit"><div class="number" id="hours">--</div><div class="label">JAM</div></div>
+    <div class="unit"><div class="number" id="minutes">--</div><div class="label">MINIT</div></div>
+    <div class="unit"><div class="number" id="seconds">--</div><div class="label">SAAT</div></div>
+  </section>
+  <div class="message" id="message">Terus berusaha. Setiap minit membawa anda lebih dekat kepada matlamat.</div>
+  <footer>SMK SYED SIRAJUDDIN</footer>
+  <div class="controls"><button id="full">Paparan skrin penuh</button></div>
+</main>
+<script>
+  // Tarikh sasaran: 26 Oktober 2026, jam 12:00 tengah malam waktu Malaysia (UTC+8).
+  const target = new Date('2026-10-26T00:00:00+08:00').getTime();
+  const el = id => document.getElementById(id);
+  const pad = n => String(n).padStart(2, '0');
+  function updateCountdown() {
+    let remaining = target - Date.now();
+    if (remaining <= 0) {
+      ['days','hours','minutes','seconds'].forEach(id => el(id).textContent = '00');
+      el('message').innerHTML = '<strong>Semoga berjaya!</strong> Berikan yang terbaik dalam Ujian Bertutur Bahasa Melayu.';
+      return;
+    }
+    const days = Math.floor(remaining / 86400000); remaining %= 86400000;
+    const hours = Math.floor(remaining / 3600000); remaining %= 3600000;
+    const minutes = Math.floor(remaining / 60000); remaining %= 60000;
+    const seconds = Math.floor(remaining / 1000);
+    el('days').textContent = String(days);
+    el('hours').textContent = pad(hours);
+    el('minutes').textContent = pad(minutes);
+    el('seconds').textContent = pad(seconds);
+    el('message').textContent = days > 3
+      ? 'Susun strategi, berlatih dengan yakin dan gunakan masa dengan bijak.'
+      : 'Fokus pada latihan, sebutan yang jelas dan keyakinan diri.';
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+  el('full').addEventListener('click', async () => {
+    try {
+      if (!document.fullscreenElement) await document.documentElement.requestFullscreen();
+      else await document.exitFullscreen();
+    } catch (e) { el('message').textContent = 'Tekan F11 untuk paparan skrin penuh pada komputer.'; }
+  });
+</script>
+</body>
+</html>
